@@ -1,7 +1,9 @@
 package C2;
 
+import java.util.*;
+
 public class E17 {
-    public static int[] arr = {4, -1, 5, -2, -1, 2, -6, -2};
+    public static int[] arr = {4, -1, -1, 1, -1, 2, -6, -2};
 
     public static int minSubSum(int[] nums) {
         int thisSum = 0;
@@ -22,18 +24,26 @@ public class E17 {
     // TODO
     public static int minPositiveSubSum(int[] nums) {
         int thisSum = 0;
-        int minSum = Integer.MAX_VALUE;
+        int MPSS = Integer.MAX_VALUE;
+
+        TreeMap<PrefixSum, Integer> sumMap = new TreeMap<>();
         for(int i = 0; i < nums.length; i++) {
             thisSum += nums[i];
+            if (thisSum > 0) MPSS = Math.min(thisSum, MPSS);
+            PrefixSum prefixSum = new PrefixSum();
+            prefixSum.value = thisSum;
+            prefixSum.index = i;
 
-            if(thisSum < minSum && thisSum > 0) {
-                minSum = thisSum;
-            } else if (thisSum > 0) {
-                thisSum = 0;
+            PrefixSum lastMax = sumMap.lowerKey(prefixSum);
+            if (lastMax != null) {
+                int lastMaxValue = lastMax.value;
+                MPSS = Math.min(thisSum - lastMaxValue, MPSS);
             }
+
+            sumMap.put(prefixSum, i);
         }
 
-        return minSum;
+        return MPSS;
     }
 
     public static int maxSubProduct(int[] nums) {
@@ -75,5 +85,27 @@ public class E17 {
         System.out.println(res);
         System.out.println(res2);
         System.out.println(res3);
+    }
+}
+
+
+class PrefixSum implements Comparable<PrefixSum> {
+    public int value;
+    public int index;
+
+    @Override
+    public int compareTo(PrefixSum a) {
+        if (this.value > a.value) {
+            return 1;
+        } else if (this.value < a.value) {
+            return -1;
+        } else if (this.value == a.value) {
+            if (this.index < a.index) {
+                return 1;
+            } else {
+                return -1;
+            }
+        }
+        return 0;
     }
 }

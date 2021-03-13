@@ -1,3 +1,4 @@
+package C1;
 
 public class E6 {
     public static int count = 0;
