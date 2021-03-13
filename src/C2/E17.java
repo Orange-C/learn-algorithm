@@ -21,7 +21,6 @@ public class E17 {
         return minSum;
     }
 
-    // TODO
     public static int minPositiveSubSum(int[] nums) {
         int thisSum = 0;
         int MPSS = Integer.MAX_VALUE;
