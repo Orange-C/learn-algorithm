@@ -24,6 +24,7 @@ class DisjointSet {
         }
     }
 
+    // path compression
     public int find(int i) {
         if (s[i] < 0) {
             return i;
@@ -32,13 +33,14 @@ class DisjointSet {
         }
     }
 
+    // union by size
     public int union(int a, int b) {
         int aroot = find(a);
         int broot = find(b);
         
         if (aroot == broot) return aroot;
 
-        if (s[aroot] < s[broot]) {
+        if (s[aroot] < s[broot]) { // because of their negative value of size
             s[aroot] += s[broot]; // add size
             s[broot] = aroot; // set root
             return aroot;
