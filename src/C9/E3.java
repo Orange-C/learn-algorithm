@@ -26,20 +26,20 @@ public class E3 {
 
     public static char[] topologicalSort(Graph graph) {
         // calculate indegree
-        HashMap<Character, Integer> indegree = new HashMap<>();
+        HashMap<Node, Integer> indegree = new HashMap<>();
         for(Node node : graph.nodes) {
-            indegree.put(node.name, 0);
+            indegree.put(node, 0);
         }
         for(Node node : graph.nodes) {
             for(Edge edge: node.edges) {
-                indegree.put(edge.tailName, indegree.get(edge.tailName)+1);
+                indegree.put(edge.tailNode, indegree.get(edge.tailNode)+1);
             }
         }
 
         // use a queue to store zero-indegree nodes
         LinkedList<Node> zeroNodes = new LinkedList<>();
         for(Node node : graph.nodes) {
-            if(indegree.get(node.name) == 0) {
+            if(indegree.get(node) == 0) {
                 zeroNodes.add(node);
             }
         }
@@ -51,10 +51,10 @@ public class E3 {
             Node current = zeroNodes.removeFirst();
             result[idx++] = current.name;
             for(Edge edge: current.edges) {
-                int newDegree = indegree.get(edge.tailName)-1;
-                indegree.put(edge.tailName, newDegree);
+                int newDegree = indegree.get(edge.tailNode)-1;
+                indegree.put(edge.tailNode, newDegree);
                 if(newDegree == 0) {
-                    zeroNodes.add(graph.getNode(edge.tailName));
+                    zeroNodes.add(edge.tailNode);
                 }
             }
         }
@@ -78,11 +78,11 @@ class Node {
 }
 
 class Edge {
-    char tailName;
+    Node tailNode;
     int cost;
 
-    Edge(char tailName, int cost) {
-        this.tailName = tailName;
+    Edge(Node tailNode, int cost) {
+        this.tailNode = tailNode;
         this.cost = cost;
     }
 }
@@ -100,7 +100,7 @@ class Graph {
             Node startNode = getNode(start);
             Node endNode = getNode(end);
 
-            Edge newEdge = new Edge(endNode.name, cost);
+            Edge newEdge = new Edge(endNode, cost);
             startNode.edges.add(newEdge);
         }
     }
