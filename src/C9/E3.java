@@ -71,6 +71,8 @@ public class E3 {
 class Node {
     char name;
     LinkedList<Edge> edges = new LinkedList<>();
+    boolean visited = false;
+    Node prev;
 
     Node(char name) {
         this.name = name;
