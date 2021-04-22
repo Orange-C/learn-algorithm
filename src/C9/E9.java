@@ -24,7 +24,7 @@ public class E9 {
         return new Graph(edges);
     }
 
-    public static void UnweightedShortestPath(Graph graph, char start) {
+    public static void unweightedShortestPath(Graph graph, char start) {
         Queue<Node> queue = new LinkedList<>();
         
         Node startNode = graph.getNode(start);
@@ -63,7 +63,7 @@ public class E9 {
         }
     }   
 
-    public static void WeightedShortestPath(Graph graph, char start) {
+    public static void weightedShortestPath(Graph graph, char start) {
         HashMap<Node, Integer> pathCost = new HashMap<>();
         for(Node node : graph.nodes) {
             pathCost.put(node, node.name == start ? 0 : Integer.MAX_VALUE);
@@ -117,13 +117,13 @@ public class E9 {
     }
 
     public static void main(String[] args) throws Exception {
-        System.out.println("UnweightedShortestPath");
+        System.out.println("unweightedShortestPath");
         System.out.println();
-        UnweightedShortestPath(initGraph(), 's');
+        unweightedShortestPath(initGraph(), 's');
         System.out.println();
-        System.out.println("WeightedShortestPath");
+        System.out.println("weightedShortestPath");
         System.out.println();
-        WeightedShortestPath(initGraph(), 's');
+        weightedShortestPath(initGraph(), 's');
         System.out.println();
     }
 }

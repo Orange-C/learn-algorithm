@@ -89,7 +89,7 @@ class Edge {
     }
 }
 
-class Graph {
+class Graph implements Cloneable {
     LinkedList<Node> nodes = new LinkedList<>();
     Graph(String[] allEdges) {
         for(String edge : allEdges) {
@@ -99,15 +99,15 @@ class Graph {
             int cost = scan.nextInt();
             scan.close();
             
-            Node startNode = getNode(start);
-            Node endNode = getNode(end);
+            Node startNode = initNode(start);
+            Node endNode = initNode(end);
 
             Edge newEdge = new Edge(endNode, cost);
             startNode.edges.add(newEdge);
         }
     }
 
-    public Node getNode(char target) {
+    private Node initNode(char target) {
         Node result = null;
         for(Node node : nodes) {
             if(node.name == target) {
@@ -120,5 +120,31 @@ class Graph {
         }
 
         return result;
+    }
+
+    public Node getNode(char target) {
+        Node result = null;
+        for(Node node : nodes) {
+            if(node.name == target) {
+                result = node;
+            }
+        }
+
+        return result;
+    }
+
+    @Override
+    public Graph clone() throws CloneNotSupportedException {
+        Graph res = (Graph) super.clone();
+        LinkedList<Node> newNodes = new LinkedList<>();
+        for(Node node : nodes) {
+            Node newNode = new Node(node.name);
+            for(Edge edge : node.edges) {
+                Edge newEdge = new Edge(edge.tailNode, edge.cost);
+                newNode.edges.add(newEdge);
+            }
+        }
+        res.nodes = newNodes;
+        return res;
     }
 }
