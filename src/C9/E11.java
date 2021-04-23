@@ -1,5 +1,7 @@
 package C9;
 
+import java.util.LinkedList;
+
 public class E11 {
     public static Graph initGraph() {
         String[] edges = {
@@ -27,9 +29,43 @@ public class E11 {
             }
         }
 
-        
+        Node grStartNode = gr.getNode(start);
+        LinkedList<Node> path = new LinkedList<>();
+        boolean hasPath = findAugmentPath(grStartNode, end, path);
+        if (hasPath) {
+            for(Node n: path) {
+                System.out.println(n.name);
+            }
+        }
     }
-    
+
+    public static void changeEdgeCost(Graph graph, Node start, Node end, int change) {
+        boolean hasEdge = false;
+        for(Edge edge : start.edges) {
+            if (!edge.tailNode.visited) {
+
+            }
+        }
+    }
+
+    public static boolean findAugmentPath(Node node, char end, LinkedList<Node> path) {
+        path.add(node);
+        node.visited = true;
+        if (node.name == end) {
+            return true;
+        } else {
+            for(Edge edge : node.edges) {
+                if (!edge.tailNode.visited) {
+                    boolean finded = findAugmentPath(edge.tailNode, end, path);
+                    if (finded) {
+                        return true;
+                    }
+                }
+            }
+        }
+        path.removeLast();
+        return false;
+    }
 
     public static void main(String[] args) throws Exception {
         networkFlow(initGraph(), 's', 't');

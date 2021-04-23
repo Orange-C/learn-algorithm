@@ -136,15 +136,15 @@ class Graph implements Cloneable {
     @Override
     public Graph clone() throws CloneNotSupportedException {
         Graph res = (Graph) super.clone();
-        LinkedList<Node> newNodes = new LinkedList<>();
+        res.nodes = new LinkedList<Node>();
         for(Node node : nodes) {
             Node newNode = new Node(node.name);
             for(Edge edge : node.edges) {
                 Edge newEdge = new Edge(edge.tailNode, edge.cost);
                 newNode.edges.add(newEdge);
             }
+            res.nodes.add(newNode);
         }
-        res.nodes = newNodes;
         return res;
     }
 }
