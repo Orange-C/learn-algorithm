@@ -1,6 +1,5 @@
 package C9;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
@@ -83,7 +82,7 @@ public class E15 {
                 allEdges.add(tmp);
             }
         }
-        allEdges.sort(new EdgeCompar());
+        allEdges.sort(null);
         
         int count = 0;
         int total = 0;
@@ -106,14 +105,12 @@ public class E15 {
     }
 }
 
-class EdgeCompar implements Comparator<FullEdge> {
-    public int compare(FullEdge a, FullEdge b) {
-        return Integer.compare(a.cost, b.cost);
-    }
-}
-
-class FullEdge {
+class FullEdge implements Comparable<FullEdge>{
     Node start;
     Node end;
     int cost;
+
+    public int compareTo(FullEdge e) {
+        return Integer.compare(this.cost, e.cost);
+    }
 }
