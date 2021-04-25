@@ -3,30 +3,29 @@ package C9;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
-import java.util.Stack;
 
 public class E11 {
     public static Graph initGraph() {
-        // String[] edges = {
-        //     "s A 1", "s D 4", "s G 6",
-        //     "A B 2", "A E 2",
-        //     "D A 3", "D E 3",
-        //     "G D 2", "G E 1", "G H 6", 
-        //     "B C 2",
-        //     "E C 2", "E F 2", "E I 2",
-        //     "H E 2", "H I 6",
-        //     "C t 4",
-        //     "F C 1", "F t 3",
-        //     "I F 1", "I t 4"
-        // };
-
         String[] edges = {
-            "s a 4", "s b 2",
-            "a b 1", "a c 2", "a d 4",
-            "b d 2",
-            "c t 3",
-            "d t 3",
+            "s A 1", "s D 4", "s G 6",
+            "A B 2", "A E 2",
+            "D A 3", "D E 3",
+            "G D 2", "G E 1", "G H 6", 
+            "B C 2",
+            "E C 2", "E F 3", "E I 3",
+            "H E 2", "H I 6",
+            "C t 4",
+            "F C 1", "F t 3",
+            "I F 1", "I t 4"
         };
+
+        // String[] edges = {
+        //     "s a 4", "s b 2",
+        //     "a b 1", "a c 2", "a d 4",
+        //     "b d 2",
+        //     "c t 3",
+        //     "d t 3",
+        // };
 
         return new Graph(edges);
     }
@@ -62,6 +61,7 @@ public class E11 {
             // reset
             for(Node node : gr.nodes) {
                 node.visited = false;
+                node.prev = null;
             }
             maxFlow = findMaxFlowPath(gr, grStartNode, grEndNode);
         }
