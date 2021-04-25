@@ -73,9 +73,15 @@ class Node {
     LinkedList<Edge> edges = new LinkedList<>();
     boolean visited = false;
     Node prev;
+    Node GFnode;
 
     Node(char name) {
         this.name = name;
+    }
+
+    public void addEdge(Node tailNode, int cost) {
+        Edge newEdge = new Edge(tailNode, cost);
+        this.edges.add(newEdge);
     }
 }
 
@@ -91,6 +97,10 @@ class Edge {
 
 class Graph implements Cloneable {
     LinkedList<Node> nodes = new LinkedList<>();
+    LinkedList<Node> gfNodes = new LinkedList<>();
+    
+    Graph() {}
+
     Graph(String[] allEdges) {
         for(String edge : allEdges) {
             Scanner scan = new Scanner(edge);
@@ -133,17 +143,36 @@ class Graph implements Cloneable {
         return result;
     }
 
-    @Override
-    public Graph clone() throws CloneNotSupportedException {
-        Graph res = (Graph) super.clone();
-        res.nodes = new LinkedList<Node>();
-        for(Node node : nodes) {
-            Node newNode = new Node(node.name);
-            for(Edge edge : node.edges) {
-                Edge newEdge = new Edge(edge.tailNode, edge.cost);
-                newNode.edges.add(newEdge);
+    private Node initNode(char target, LinkedList<Node> targetNodes) {
+        Node result = null;
+        for(Node node : targetNodes) {
+            if(node.name == target) {
+                result = node;
             }
-            res.nodes.add(newNode);
+        }
+        if (result == null) {
+            result = new Node(target);
+            targetNodes.add(result);
+        }
+
+        return result;
+    }
+
+    public Graph getNFGraph() {
+        Graph res = new Graph();
+
+        for(Node node : nodes) {
+            Node newNode = initNode(node.name, res.nodes);
+            Node newGFNode = initNode(node.name, res.gfNodes);
+            newNode.GFnode = newGFNode;
+            
+            for(Edge edge : node.edges) {
+                Node newEndNode = initNode(edge.tailNode.name, res.nodes);
+                newNode.addEdge(newEndNode, edge.cost);
+
+                Node newGFEndNode = initNode(edge.tailNode.name, res.gfNodes);
+                newGFNode.addEdge(newGFEndNode, 0);
+            }
         }
         return res;
     }
