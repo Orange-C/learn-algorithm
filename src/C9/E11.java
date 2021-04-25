@@ -27,7 +27,7 @@ public class E11 {
         //     "d t 3",
         // };
 
-        return new Graph(edges);
+        return new Graph(edges, true);
     }
 
     public static void networkFlow(Graph graph, char start, char end) throws CloneNotSupportedException {

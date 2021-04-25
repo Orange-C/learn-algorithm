@@ -21,7 +21,7 @@ public class E9 {
             "I F 1", "I t 4"
         };
 
-        return new Graph(edges);
+        return new Graph(edges, true);
     }
 
     public static void unweightedShortestPath(Graph graph, char start) {

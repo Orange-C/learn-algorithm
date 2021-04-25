@@ -19,7 +19,7 @@ public class E3 {
             "F C 1", "F t 3",
             "I F 1", "I t 4"
         };
-        Graph g = new Graph(edges);
+        Graph g = new Graph(edges, true);
 
         return g;
     }
@@ -95,13 +95,13 @@ class Edge {
     }
 }
 
-class Graph implements Cloneable {
+class Graph {
     LinkedList<Node> nodes = new LinkedList<>();
     LinkedList<Node> gfNodes = new LinkedList<>();
     
     Graph() {}
 
-    Graph(String[] allEdges) {
+    Graph(String[] allEdges, boolean hasDirection) {
         for(String edge : allEdges) {
             Scanner scan = new Scanner(edge);
             char start = scan.next().toCharArray()[0];
@@ -112,8 +112,10 @@ class Graph implements Cloneable {
             Node startNode = initNode(start);
             Node endNode = initNode(end);
 
-            Edge newEdge = new Edge(endNode, cost);
-            startNode.edges.add(newEdge);
+            startNode.addEdge(endNode, cost);
+            if (!hasDirection) {
+                endNode.addEdge(startNode, cost);
+            }
         }
     }
 
