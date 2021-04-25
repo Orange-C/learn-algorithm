@@ -85,14 +85,14 @@ public class E9 {
             current.node.visited = true;
             for(Edge edge : current.node.edges) {
                 int newCost = current.cost + edge.cost;
-                // add updated pnode to pq despite of its newCost 
                 PNode newNode = new PNode(edge.tailNode, newCost);
+                // add updated pnode to pq despite of its newCost 
+                pq.add(newNode);
                 // update cost and previous node
                 if(newCost < pathCost.get(edge.tailNode)) {
                     edge.tailNode.prev = current.node;
                     pathCost.put(edge.tailNode, newCost);
                 }
-                pq.add(newNode);
             }
         }
 

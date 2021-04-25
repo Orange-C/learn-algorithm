@@ -1,6 +1,9 @@
 package C9;
 
+import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Stack;
 
 public class E11 {
     public static Graph initGraph() {
@@ -19,7 +22,7 @@ public class E11 {
 
         String[] edges = {
             "s a 4", "s b 2",
-            "a d 4", "a b 1", "a c 2",
+            "a b 1", "a c 2", "a d 4",
             "b d 2",
             "c t 3",
             "d t 3",
@@ -30,55 +33,50 @@ public class E11 {
 
     public static void networkFlow(Graph graph, char start, char end) throws CloneNotSupportedException {
         Graph gr = graph.getNFGraph();
-        // Graph gf = new Graph();
-        // gf.nodes = gr.gfNodes;
 
         Node grStartNode = gr.getNode(start);
-        LinkedList<Node> path = new LinkedList<>();
-        int[] pathMin = { Integer.MAX_VALUE };
-        boolean hasPath = findAugmentPath(grStartNode, end, Integer.MAX_VALUE, path, pathMin);
-
-        while(hasPath) {
-            for(Node n: path) {
+        Node grEndNode = gr.getNode(end);
+        MaxFlow maxFlow = findMaxFlowPath(gr, grStartNode, grEndNode);
+        
+        while(maxFlow != null) {
+            for(Node n: maxFlow.path) {
                 System.out.printf("%s ", n.name);
             }
-            System.out.println(pathMin[0]);
+            System.out.println(maxFlow.flow);
 
-            Node pStart = path.removeFirst();
-            Node pEnd = path.removeFirst();
+            Node pStart = maxFlow.path.removeFirst();
+            Node pEnd = maxFlow.path.removeFirst();
             while (true) {
                 // subtract m
-                changeEdgeCostGR(pStart, pEnd, -pathMin[0]);
+                changeEdgeCostGR(pStart, pEnd, -maxFlow.flow);
                 // add opposite m
-                changeEdgeCostGR(pEnd, pStart, pathMin[0]);
+                changeEdgeCostGR(pEnd, pStart, maxFlow.flow);
                 // add flow
-                changeEdgeCostGF(pStart, pEnd, pathMin[0]);
+                changeEdgeCostGF(pStart, pEnd, maxFlow.flow);
 
-                if (path.isEmpty()) break;
+                if (maxFlow.path.isEmpty()) break;
                 pStart = pEnd;
-                pEnd = path.removeFirst();
+                pEnd = maxFlow.path.removeFirst();
             }
-            
 
             // reset
             for(Node node : gr.nodes) {
                 node.visited = false;
             }
-            pathMin[0] = Integer.MAX_VALUE;
-            hasPath = findAugmentPath(grStartNode, end, Integer.MAX_VALUE, path, pathMin);
+            maxFlow = findMaxFlowPath(gr, grStartNode, grEndNode);
         }
 
         for(Node node : gr.nodes) {
             node.visited = false;
         }
-        int[] maxFlow = {0};
+        int[] res = {0};
         for(Node n : gr.gfNodes) {
             if (n.name == start){
-                findMaxFlow(n, end, maxFlow);
+                findMaxFlow(n, end, res);
                 break;
             }
         }
-        System.out.println(maxFlow[0]);
+        System.out.println(res[0]);
     }
 
     public static void findMaxFlow(Node node, char end, int[] maxValue) {
@@ -94,36 +92,25 @@ public class E11 {
         }
     }
 
-    public static boolean findAugmentPath(Node node, char end, int min, LinkedList<Node> path, int[] pathMin) {
-        path.add(node);
-        node.visited = true;
-        if (node.name == end) {
-            pathMin[0] = min;
-            return true;
-        } else {
-            for(Edge edge : node.edges) {
-                // skip zero-cost edges
-                if (!edge.tailNode.visited && edge.cost > 0) {
-                    int currentMin = edge.cost < min ? edge.cost : min;
-                    boolean finded = findAugmentPath(edge.tailNode, end, currentMin, path, pathMin);
-                    if (finded) {
-                        return true;
-                    }
-                }
-            }
-        }
-        path.removeLast();
-        return false;
-    }
-
     public static void changeEdgeCostGF(Node start, Node end, int change) {
+        boolean hasEdge = false;
         Node gfStart = start.GFnode;
         Node gfEnd = end.GFnode;
 
         for(Edge edge : gfStart.edges) {
             if(edge.tailNode.name == gfEnd.name) {
                 edge.cost += change;
+                hasEdge = true;
                 return;
+            }
+        }
+
+        if(!hasEdge) {
+            for(Edge edge : gfEnd.edges) {
+                if(edge.tailNode.name == gfStart.name) {
+                    edge.cost -= change;
+                    return;
+                }
             }
         }
     }
@@ -143,7 +130,84 @@ public class E11 {
         }
     }
 
+    // find the max-flow augmenting path
+    public static MaxFlow findMaxFlowPath(Graph graph, Node start, Node end) {
+        HashMap<Node, Integer> pathFlow = new HashMap<>();
+        for(Node node : graph.nodes) {
+            pathFlow.put(node, node.name == start.name ? Integer.MAX_VALUE : 0);
+        }
+
+        PriorityQueue<NPNode> pq = new PriorityQueue<>(graph.nodes.size());
+        NPNode startNode = new NPNode(start, Integer.MAX_VALUE);
+        pq.add(startNode);
+
+        int count = 0;
+        // run n times
+        while(count < graph.nodes.size()) {
+            NPNode current = pq.remove();
+            
+            // skip duplicate nodes
+            if (current.node.visited) continue;
+
+            count++;
+            current.node.visited = true;
+            int currentFlow = pathFlow.get(current.node);
+            for(Edge edge : current.node.edges) {
+                int endFlow = pathFlow.get(edge.tailNode);
+                int newFlow = edge.cost < currentFlow ? edge.cost : currentFlow;
+                NPNode newNode = new NPNode(edge.tailNode, newFlow);
+                pq.add(newNode);
+                if(newFlow > endFlow) {
+                    edge.tailNode.prev = current.node;
+                    pathFlow.put(edge.tailNode, newFlow);
+                }
+            }
+
+            if (current.node.name == end.name) break;
+        }
+
+
+        int flow = pathFlow.get(end);
+        if (flow == 0) {
+            return null;
+        }
+
+        LinkedList<Node> path = new LinkedList<>();
+        path.addFirst(end);
+        Node prev = end.prev;
+        while (prev != null) {
+            path.addFirst(prev);
+            prev = prev.prev;
+        }
+
+        return new MaxFlow(path, flow);
+    }
+
     public static void main(String[] args) throws Exception {
         networkFlow(initGraph(), 's', 't');
+    }
+}
+
+class NPNode implements Comparable<NPNode>{
+    Node node;
+    int cost;
+    
+    NPNode(Node node, int cost) {
+        this.node = node;
+        this.cost = cost;
+    }
+
+    public int compareTo(NPNode pnode) {
+        return -Integer.compare(this.cost, pnode.cost);
+    }
+}
+
+class MaxFlow {
+    int flow;
+    LinkedList<Node> path;
+
+    MaxFlow(LinkedList<Node> path, int flow) {
+        this.path = path;
+        this.flow = flow;
     }
 }
