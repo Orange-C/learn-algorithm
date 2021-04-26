@@ -73,7 +73,13 @@ class Node {
     LinkedList<Edge> edges = new LinkedList<>();
     boolean visited = false;
     Node prev;
+
+    // for E11
     Node GFnode;
+
+    // for E21
+    int number;
+    int low;
 
     Node(char name) {
         this.name = name;
