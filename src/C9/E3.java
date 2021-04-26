@@ -125,7 +125,7 @@ class Graph {
         }
     }
 
-    private Node initNode(char target) {
+    public Node initNode(char target) {
         Node result = null;
         for(Node node : nodes) {
             if(node.name == target) {
