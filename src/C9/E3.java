@@ -2,6 +2,7 @@ package C9;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
@@ -81,12 +82,17 @@ class Node {
     int number;
     int low;
 
+    // for E32
+    HashMap<Node, Edge> edgeMap = new HashMap<>();
+    int edgeCount = 0;
+
     Node(char name) {
         this.name = name;
     }
 
     public void addEdge(Node tailNode, int cost) {
-        Edge newEdge = new Edge(tailNode, cost);
+        Edge newEdge = new Edge(this, tailNode, cost);
+        edgeMap.put(tailNode, newEdge);
         this.edges.add(newEdge);
     }
 }
@@ -95,7 +101,11 @@ class Edge {
     Node tailNode;
     int cost;
 
-    Edge(Node tailNode, int cost) {
+    // for debug
+    Node startNode;
+
+    Edge(Node startNode, Node tailNode, int cost) {
+        this.startNode = tailNode;
         this.tailNode = tailNode;
         this.cost = cost;
     }
