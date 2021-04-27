@@ -2,7 +2,6 @@ package C9;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Scanner;
 
